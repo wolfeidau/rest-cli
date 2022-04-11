@@ -1,6 +1,40 @@
 # rest-cli
 
-Command line REST API client which signs requests using AWS sigv4. 
+Command line REST API client which signs requests using AWS sigv4.
+
+# Usage
+
+```
+Usage: rest-cli <url>
+
+A basic REST cli.
+
+Arguments:
+  <url>
+
+Flags:
+  -h, --help                     Show context-sensitive help.
+      --verbose
+      --version
+  -X, --method="GET"
+      --service="execute-api"
+  -d, --data=STRING
+  -H, --headers=KEY=VALUE;...
+```
+
+# Examples
+
+Send a `GET` request to an endpoint URL and pipe the output.
+
+```
+rest-cli https://example.com/customers
+```
+
+Send a `POST` request to an endpoint URL with a JSON body.
+
+```
+rest-cli -X POST -H 'Content-Type=application/json' -d '{"name":"AWS", "labels":[]}' https://example.com/customers
+```
 
 # License
 
