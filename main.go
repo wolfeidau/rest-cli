@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,10 +12,10 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/wolfeidau/rest-cli/pkg/sigv4"
 )
 
 var (
@@ -74,18 +72,10 @@ func main() {
 		req.Header.Add(k, v)
 	}
 
-	signer := v4.NewSigner()
+	signerTransport := sigv4.NewTransport(cfg, flags.Service, cfg.Region, http.DefaultTransport)
 
-	creds, err := cfg.Credentials.Retrieve(ctx)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to load creds")
-	}
-
-	payloadHash := generatePayloadHash(flags.Data)
-
-	err = signer.SignHTTP(ctx, creds, req, payloadHash, flags.Service, cfg.Region, time.Now())
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to load creds")
+	client := &http.Client{
+		Transport: signerTransport,
 	}
 
 	if flags.Verbose {
@@ -98,9 +88,9 @@ func main() {
 
 	start := time.Now()
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to load creds")
+		log.Fatal().Err(err).Msg("failed to send request")
 	}
 
 	if res.StatusCode > 400 {
@@ -117,12 +107,4 @@ func main() {
 	log.Info().Str("status", res.Status).Str("duration", time.Since(start).String()).Msg("request successful")
 
 	fmt.Fprintln(os.Stdout, string(data))
-}
-
-func generatePayloadHash(body string) string {
-	reader := strings.NewReader(body)
-
-	h := sha256.New()
-	_, _ = io.Copy(h, reader)
-	return hex.EncodeToString(h.Sum(nil))
 }
