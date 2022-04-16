@@ -1,6 +1,9 @@
 # rest-cli
 
-Command line REST API client which signs requests using AWS sigv4.
+Command line REST API client which signs requests using AWS [Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) for use with [Amazon API Gateway](https://aws.amazon.com/api-gateway/).
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/wolfeidau/rest-cli)](https://goreportcard.com/report/github.com/wolfeidau/rest-cli)
+[![Documentation](https://godoc.org/github.com/wolfeidau/rest-cli?status.svg)](https://godoc.org/github.com/wolfeidau/rest-cli)
 
 # Usage
 
