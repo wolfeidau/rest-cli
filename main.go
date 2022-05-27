@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/wolfeidau/rest-cli/pkg/dump"
 	"github.com/wolfeidau/rest-cli/pkg/rest"
 	"github.com/wolfeidau/rest-cli/pkg/sigv4"
 )
@@ -20,8 +21,9 @@ var (
 	version = "unknown"
 
 	flags struct {
-		Verbose bool
 		Version kong.VersionFlag
+		Verbose bool              `description:"Enable DEBUG level logging"`
+		Dump    bool              `description:"Dump the content of the request and response to stderr"`
 		Method  string            `enum:"GET,POST,PATCH,PUT,DELETE" default:"GET" short:"X"`
 		Service string            `default:"execute-api"`
 		Data    string            `short:"d"`
@@ -56,8 +58,14 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
 
+	transport := http.DefaultTransport
+
+	if flags.Dump {
+		transport = dump.WrapTransport(os.Stderr, transport)
+	}
+
 	httpClient := &http.Client{
-		Transport: sigv4.NewTransport(cfg, flags.Service, cfg.Region, http.DefaultTransport),
+		Transport: sigv4.NewTransport(cfg, flags.Service, cfg.Region, transport),
 	}
 
 	var body io.Reader
