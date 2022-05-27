@@ -17,8 +17,9 @@ Arguments:
 
 Flags:
   -h, --help                     Show context-sensitive help.
-      --verbose
       --version
+      --verbose
+      --dump
   -X, --method="GET"
       --service="execute-api"
   -d, --data=STRING
