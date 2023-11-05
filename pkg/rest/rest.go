@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -46,7 +45,7 @@ func (cl *Client) DoRequest(method string, url string, headers map[string]string
 		return fmt.Errorf("bad response: %s", res.Status)
 	}
 
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read body: %w", err)
 	}
