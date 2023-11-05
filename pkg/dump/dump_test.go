@@ -22,13 +22,13 @@ func TestDumpTransport(t *testing.T) {
 
 	server.Client().Transport = WrapTransport(buf, server.Client().Transport)
 
-	req := request("GET", server.URL, bytes.NewBufferString("{}"))
+	req := request("POST", server.URL, bytes.NewBufferString("{}"))
 
 	res, err := server.Client().Do(req)
 	assert.NoError(err)
 	assert.Equal(200, res.StatusCode)
 
-	assert.Contains(buf.String(), "{ }\n")
+	assert.Contains(buf.String(), "{}\n")
 }
 
 func request(method, url string, body io.Reader) *http.Request {

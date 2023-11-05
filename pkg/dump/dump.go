@@ -20,7 +20,7 @@ func WrapTransport(output io.Writer, transport http.RoundTripper) *DumpTransport
 }
 
 func (ds *DumpTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	data, err := httputil.DumpRequestOut(req, false)
+	data, err := httputil.DumpRequestOut(req, true)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (ds *DumpTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	data, err = httputil.DumpResponse(res, false)
+	data, err = httputil.DumpResponse(res, true)
 	if err != nil {
 		return nil, err
 	}
